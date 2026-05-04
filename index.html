@@ -1,0 +1,1714 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TAOISI - 4000年前的AI智慧协议</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=Noto+Serif+TC:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/web3@4.5.0/dist/web3.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #8B4513;
+            --primary-dark: #5D3A1A;
+            --gold: #D4AF37;
+            --gold-light: #F4E8C1;
+            --dark: #1a1a1a;
+            --dark-secondary: #2d2d2d;
+            --text: #f5f5f5;
+            --text-muted: #a0a0a0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark);
+            color: var(--text);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        /* 星空背景 */
+        .stars-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .star {
+            position: absolute;
+            background: white;
+            border-radius: 50%;
+            animation: twinkle 3s infinite;
+        }
+
+        @keyframes twinkle {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 1; }
+        }
+
+        /* 导航 */
+        nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8), transparent);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 45px;
+            height: 45px;
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo-text {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--gold);
+            letter-spacing: 2px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 15px;
+            font-weight: 500;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-links a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--gold);
+            transition: width 0.3s;
+        }
+
+        .nav-links a:hover::after {
+            width: 100%;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        /* 语言切换器 */
+        .lang-switcher {
+            position: relative;
+        }
+
+        .lang-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            color: var(--gold);
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s;
+        }
+
+        .lang-btn:hover {
+            background: rgba(212, 175, 55, 0.1);
+            border-color: var(--gold);
+        }
+
+        .lang-dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            background: var(--dark-secondary);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 12px;
+            padding: 8px;
+            min-width: 120px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s;
+            z-index: 1001;
+        }
+
+        .lang-switcher:hover .lang-dropdown {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .lang-option {
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text);
+            transition: all 0.2s;
+        }
+
+        .lang-option:hover {
+            background: rgba(212, 175, 55, 0.1);
+            color: var(--gold);
+        }
+
+        .lang-option.active {
+            color: var(--gold);
+            font-weight: 600;
+        }
+
+        /* 钱包连接按钮 */
+        .wallet-btn {
+            background: linear-gradient(135deg, var(--gold), #B8860B);
+            color: var(--dark);
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .wallet-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(212, 175, 55, 0.3);
+        }
+
+        .wallet-btn.connected {
+            background: rgba(212, 175, 55, 0.2);
+            color: var(--gold);
+            border: 1px solid var(--gold);
+        }
+
+        /* Hero Section */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 120px 5% 80px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            max-width: 900px;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(212, 175, 55, 0.1);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-size: 14px;
+            color: var(--gold);
+            margin-bottom: 30px;
+        }
+
+        .hero h1 {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 72px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            background: linear-gradient(135deg, var(--gold), #fff, var(--gold));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: 8px;
+        }
+
+        .hero-subtitle {
+            font-size: 24px;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+            font-weight: 300;
+        }
+
+        .hero-tagline {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 40px;
+            letter-spacing: 4px;
+        }
+
+        .hero-desc {
+            font-size: 18px;
+            color: var(--text-muted);
+            max-width: 700px;
+            margin: 0 auto 50px;
+            line-height: 1.8;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 20px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--gold), #B8860B);
+            color: var(--dark);
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            transition: all 0.3s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(212, 175, 55, 0.4);
+        }
+
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            padding: 18px 45px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.2);
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        /* Stats Section */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 60px;
+            padding: 60px 5%;
+            background: rgba(0,0,0,0.3);
+            position: relative;
+            z-index: 1;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--gold);
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* Section Styles */
+        section {
+            padding: 100px 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 42px;
+            text-align: center;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .section-subtitle {
+            text-align: center;
+            color: var(--text-muted);
+            font-size: 18px;
+            max-width: 600px;
+            margin: 0 auto 60px;
+        }
+
+        /* Narrative Section */
+        .narrative {
+            background: linear-gradient(to bottom, var(--dark), var(--dark-secondary));
+        }
+
+        .timeline {
+            display: flex;
+            justify-content: space-between;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: linear-gradient(to right, transparent, var(--gold), transparent);
+        }
+
+        .timeline-item {
+            text-align: center;
+            padding: 40px;
+            background: var(--dark-secondary);
+            border-radius: 20px;
+            width: 30%;
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            position: relative;
+        }
+
+        .timeline-year {
+            font-size: 14px;
+            color: var(--gold);
+            font-weight: 600;
+            letter-spacing: 2px;
+            margin-bottom: 15px;
+        }
+
+        .timeline-title {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .timeline-desc {
+            font-size: 15px;
+            color: var(--text-muted);
+            line-height: 1.7;
+        }
+
+        /* Features Section */
+        .features {
+            background: var(--dark);
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .feature-card {
+            background: var(--dark-secondary);
+            padding: 40px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            transition: all 0.3s;
+        }
+
+        .feature-card:hover {
+            border-color: rgba(212, 175, 55, 0.3);
+            transform: translateY(-5px);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--gold), var(--primary));
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 25px;
+        }
+
+        .feature-title {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 22px;
+            margin-bottom: 15px;
+            color: var(--gold);
+        }
+
+        .feature-desc {
+            color: var(--text-muted);
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* Tokenomics Section */
+        .tokenomics {
+            background: linear-gradient(to bottom, var(--dark-secondary), var(--dark));
+        }
+
+        .tokenomics-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1100px;
+            margin: 0 auto;
+            align-items: center;
+        }
+
+        .token-info h3 {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 32px;
+            margin-bottom: 30px;
+            color: var(--gold);
+        }
+
+        .token-detail {
+            display: flex;
+            justify-content: space-between;
+            padding: 20px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .token-detail-label {
+            color: var(--text-muted);
+        }
+
+        .token-detail-value {
+            font-weight: 600;
+            color: var(--gold);
+        }
+
+        .chart-container {
+            position: relative;
+            width: 400px;
+            height: 400px;
+            margin: 0 auto;
+        }
+
+        .chart-center {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .chart-center-value {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--gold);
+        }
+
+        .chart-center-label {
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+
+        /* Roadmap Section */
+        .roadmap {
+            background: var(--dark);
+        }
+
+        .roadmap-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .roadmap-phase {
+            background: var(--dark-secondary);
+            padding: 35px;
+            border-radius: 20px;
+            border: 1px solid rgba(212, 175, 55, 0.1);
+            position: relative;
+        }
+
+        .roadmap-phase.active {
+            border-color: var(--gold);
+            background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), var(--dark-secondary));
+        }
+
+        .phase-number {
+            position: absolute;
+            top: -15px;
+            left: 35px;
+            background: var(--gold);
+            color: var(--dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+        }
+
+        .phase-title {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 20px;
+            margin: 20px 0 15px;
+            color: var(--gold);
+        }
+
+        .phase-list {
+            list-style: none;
+        }
+
+        .phase-list li {
+            padding: 8px 0;
+            color: var(--text-muted);
+            font-size: 14px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .phase-list li::before {
+            content: '◆';
+            position: absolute;
+            left: 0;
+            color: var(--gold);
+            font-size: 8px;
+            top: 12px;
+        }
+
+        /* CTA Section */
+        .cta {
+            background: linear-gradient(135deg, var(--primary-dark), var(--dark));
+            text-align: center;
+            padding: 120px 5%;
+        }
+
+        .cta h2 {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 48px;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .cta p {
+            font-size: 20px;
+            color: var(--text-muted);
+            margin-bottom: 40px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark-secondary);
+            padding: 60px 5% 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 0 auto 50px;
+        }
+
+        .footer-brand {
+            max-width: 300px;
+        }
+
+        .footer-brand .logo {
+            margin-bottom: 20px;
+        }
+
+        .footer-brand p {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        .footer-title {
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--gold);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .footer-links a:hover {
+            color: var(--gold);
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text);
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        .social-links a:hover {
+            background: var(--gold);
+            color: var(--dark);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: var(--dark-secondary);
+            border: 1px solid rgba(212, 175, 55, 0.2);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 420px;
+            width: 90%;
+            transform: scale(0.9);
+            transition: transform 0.3s;
+        }
+
+        .modal-overlay.active .modal {
+            transform: scale(1);
+        }
+
+        .modal-title {
+            font-family: 'Noto Serif SC', 'Noto Serif TC', serif;
+            font-size: 24px;
+            color: var(--gold);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .modal-subtitle {
+            color: var(--text-muted);
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .wallet-option {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 16px 20px;
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin-bottom: 12px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .wallet-option:hover {
+            border-color: var(--gold);
+            background: rgba(212, 175, 55, 0.1);
+        }
+
+        .wallet-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #F6851B, #E2761B);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        .wallet-name {
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-size: 24px;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .modal-close:hover {
+            color: var(--gold);
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero h1 {
+                font-size: 48px;
+            }
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .roadmap-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            .hero h1 {
+                font-size: 36px;
+                letter-spacing: 4px;
+            }
+            .hero-tagline {
+                font-size: 20px;
+            }
+            .timeline {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .timeline::before {
+                display: none;
+            }
+            .timeline-item {
+                width: 100%;
+            }
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            .tokenomics-content {
+                grid-template-columns: 1fr;
+            }
+            .roadmap-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats {
+                flex-direction: column;
+                gap: 30px;
+            }
+            .footer-content {
+                grid-template-columns: 1fr;
+            }
+            .nav-right {
+                gap: 10px;
+            }
+            .wallet-btn {
+                padding: 10px 16px;
+                font-size: 12px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 星空背景 -->
+    <div class="stars-bg" id="stars"></div>
+
+    <!-- 导航 -->
+    <nav>
+        <div class="logo">
+            <div class="logo-icon">龍</div>
+            <span class="logo-text">TAOISI</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="#narrative" data-i18n="nav.narrative">文明叙事</a></li>
+            <li><a href="#features" data-i18n="nav.features">协议特色</a></li>
+            <li><a href="#tokenomics" data-i18n="nav.tokenomics">代币经济</a></li>
+            <li><a href="#roadmap" data-i18n="nav.roadmap">发展路线</a></li>
+        </ul>
+        <div class="nav-right">
+            <!-- 语言切换器 -->
+            <div class="lang-switcher">
+                <button class="lang-btn" id="currentLang">
+                    <span>🌐</span>
+                    <span id="langText">中文</span>
+                </button>
+                <div class="lang-dropdown">
+                    <div class="lang-option" data-lang="zh-CN">中文简体</div>
+                    <div class="lang-option" data-lang="zh-TW">中文繁體</div>
+                    <div class="lang-option" data-lang="en">English</div>
+                </div>
+            </div>
+            <!-- 钱包连接按钮 -->
+            <button class="wallet-btn" id="walletBtn" onclick="openWalletModal()">
+                <span>🔗</span>
+                <span data-i18n="wallet.connect">连接钱包</span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <div class="hero-badge">
+                <span>🏛️</span>
+                <span data-i18n="hero.badge">4000年文明 × AI智能</span>
+            </div>
+            <h1>TAOISI</h1>
+            <p class="hero-subtitle" data-i18n="hero.subtitle">陶寺智慧协议</p>
+            <p class="hero-tagline" data-i18n="hero.tagline">「敬授民时，数授链时」</p>
+            <p class="hero-desc" data-i18n="hero.desc">
+                当陶寺观象台遇见AI神经网络。4300年前，先民以12道缝隙观测天象，制定历法指导农耕——这是人类最早的"数据收集与算法预测"系统。今天，TAOISI继承这份智慧，打造去中心化AI预测协议。
+            </p>
+            <div class="hero-buttons">
+                <button class="btn-primary" onclick="openWalletModal()">
+                    <span data-i18n="hero.connectWallet">🔗 连接钱包</span>
+                </button>
+                <a href="#narrative" class="btn-secondary" data-i18n="hero.whitepaper">📖 阅读白皮书</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <div class="stats">
+        <div class="stat-item">
+            <span class="stat-number">4300</span>
+            <span class="stat-label" data-i18n="stats.history">年历史传承</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">4.3B</span>
+            <span class="stat-label" data-i18n="stats.supply">$TAO 总供应量</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">20</span>
+            <span class="stat-label" data-i18n="stats.nodes">节气算法节点</span>
+        </div>
+        <div class="stat-item">
+            <span class="stat-number">∞</span>
+            <span class="stat-label" data-i18n="stats.possibilities">预测可能性</span>
+        </div>
+    </div>
+
+    <!-- Narrative Section -->
+    <section id="narrative" class="narrative">
+        <h2 class="section-title" data-i18n="narrative.title">文明叙事</h2>
+        <p class="section-subtitle" data-i18n="narrative.subtitle">从陶寺观象台到去中心化AI协议，跨越四千年的智慧传承</p>
+        <div class="timeline">
+            <div class="timeline-item">
+                <div class="timeline-year" data-i18n="narrative.phase1.year">公元前2300年</div>
+                <h3 class="timeline-title" data-i18n="narrative.phase1.title">观象授时</h3>
+                <p class="timeline-desc" data-i18n="narrative.phase1.desc">陶寺先民建造世界最早的天文观测台，通过12道缝隙观测日出，将一年精确划分为20个节气，制定指导农耕的历法系统。</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year" data-i18n="narrative.phase2.year">2025年</div>
+                <h3 class="timeline-title" data-i18n="narrative.phase2.title">文明觉醒</h3>
+                <p class="timeline-desc" data-i18n="narrative.phase2.desc">陶寺遗址正式列入国家考古遗址公园，"最初的中国"走向世界。龙盘、圭表、观象台——先民的智慧等待被重新诠释。</p>
+            </div>
+            <div class="timeline-item">
+                <div class="timeline-year" data-i18n="narrative.phase3.year">2025年</div>
+                <h3 class="timeline-title" data-i18n="narrative.phase3.title">智慧上链</h3>
+                <p class="timeline-desc" data-i18n="narrative.phase3.desc">TAOISI协议诞生。观象台成为分布式数据节点，节气历法进化为AI预测模型，每一位持有者都是新时代的"羲和之官"。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="features">
+        <h2 class="section-title" data-i18n="features.title">协议特色</h2>
+        <p class="section-subtitle" data-i18n="features.subtitle">融合古代天文智慧与现代AI技术的创新协议</p>
+        <div class="features-grid">
+            <div class="feature-card">
+                <div class="feature-icon">🔭</div>
+                <h3 class="feature-title" data-i18n="features.f1.title">观象节点网络</h3>
+                <p class="feature-desc" data-i18n="features.f1.desc">分布式数据收集节点如同陶寺观象台的12道缝隙，实时捕获市场信号、社会趋势、自然周期等多维度数据，为AI模型提供训练燃料。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🤖</div>
+                <h3 class="feature-title" data-i18n="features.f2.title">节气预测模型</h3>
+                <p class="feature-desc" data-i18n="features.f2.desc">基于深度学习的时间序列预测模型，将陶寺20节气智慧转化为市场周期预测算法，帮助参与者把握最佳时机。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">⚖️</div>
+                <h3 class="feature-title" data-i18n="features.f3.title">龙盘治理权</h3>
+                <p class="feature-desc" data-i18n="features.f3.desc">持有$TAO即获得治理权，如同陶寺龙盘象征的王权地位。参与协议升级、模型参数调整、生态基金分配等关键决策。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🌾</div>
+                <h3 class="feature-title" data-i18n="features.f4.title">农耕收益机制</h3>
+                <p class="feature-desc" data-i18n="features.f4.desc">质押$TAO参与AI模型训练与验证，获得预测市场收益分成。如先民依历法耕作收获，参与者依算法共享智慧果实。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🔗</div>
+                <h3 class="feature-title" data-i18n="features.f5.title">圭表跨链桥</h3>
+                <p class="feature-desc" data-i18n="features.f5.desc">以陶寺圭表为灵感，构建多链互操作协议。$TAO可在以太坊、BSC、Solana等主流公链间自由流通，打破生态孤岛。</p>
+            </div>
+            <div class="feature-card">
+                <div class="feature-icon">🎭</div>
+                <h3 class="feature-title" data-i18n="features.f6.title">文明NFT</h3>
+                <p class="feature-desc" data-i18n="features.f6.desc">陶寺龙盘、彩绘陶器等文物数字化重生。限量发行的文明NFT不仅是收藏品，更是协议治理特权与收益加成的凭证。</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tokenomics Section -->
+    <section id="tokenomics" class="tokenomics">
+        <h2 class="section-title" data-i18n="tokenomics.title">代币经济</h2>
+        <p class="section-subtitle" data-i18n="tokenomics.subtitle">$TAO 代币分配与使用场景</p>
+        <div class="tokenomics-content">
+            <div class="token-info">
+                <h3 data-i18n="tokenomics.details">代币详情</h3>
+                <div class="token-detail">
+                    <span class="token-detail-label" data-i18n="tokenomics.nameLabel">代币名称</span>
+                    <span class="token-detail-value">TAOISI</span>
+                </div>
+                <div class="token-detail">
+                    <span class="token-detail-label" data-i18n="tokenomics.symbolLabel">代币符号</span>
+                    <span class="token-detail-value">$TAO</span>
+                </div>
+                <div class="token-detail">
+                    <span class="token-detail-label" data-i18n="tokenomics.supplyLabel">总供应量</span>
+                    <span class="token-detail-value">4,300,000,000</span>
+                </div>
+                <div class="token-detail">
+                    <span class="token-detail-label" data-i18n="tokenomics.chainLabel">区块链</span>
+                    <span class="token-detail-value">Ethereum / BSC</span>
+                </div>
+                <div class="token-detail">
+                    <span class="token-detail-label" data-i18n="tokenomics.contractLabel">合约地址</span>
+                    <span class="token-detail-value" data-i18n="tokenomics.comingSoon">即将公布</span>
+                </div>
+            </div>
+            <div class="chart-container">
+                <svg viewBox="0 0 200 200" width="100%" height="100%">
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#2d2d2d" stroke-width="30"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#D4AF37" stroke-width="30" 
+                            stroke-dasharray="100.5 150.8" stroke-dashoffset="0" transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#8B4513" stroke-width="30" 
+                            stroke-dasharray="75.4 176" stroke-dashoffset="-100.5" transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#B8860B" stroke-width="30" 
+                            stroke-dasharray="37.7 213.6" stroke-dashoffset="-175.9" transform="rotate(-90 100 100)"/>
+                    <circle cx="100" cy="100" r="80" fill="none" stroke="#CD853F" stroke-width="30" 
+                            stroke-dasharray="37.7 213.6" stroke-dashoffset="-213.6" transform="rotate(-90 100 100)"/>
+                </svg>
+                <div class="chart-center">
+                    <div class="chart-center-value">$TAO</div>
+                    <div class="chart-center-label">4.3B Total</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Roadmap Section -->
+    <section id="roadmap" class="roadmap">
+        <h2 class="section-title" data-i18n="roadmap.title">发展路线</h2>
+        <p class="section-subtitle" data-i18n="roadmap.subtitle">TAOISI 协议的演进规划</p>
+        <div class="roadmap-grid">
+            <div class="roadmap-phase active">
+                <div class="phase-number">I</div>
+                <h3 class="phase-title" data-i18n="roadmap.phase1.title">观象期 Q1 2025</h3>
+                <ul class="phase-list">
+                    <li data-i18n="roadmap.phase1.item1">白皮书发布</li>
+                    <li data-i18n="roadmap.phase1.item2">官网与社区建设</li>
+                    <li data-i18n="roadmap.phase1.item3">智能合约审计</li>
+                    <li data-i18n="roadmap.phase1.item4">种子轮融资</li>
+                    <li data-i18n="roadmap.phase1.item5">核心团队组建</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <div class="phase-number">II</div>
+                <h3 class="phase-title" data-i18n="roadmap.phase2.title">授时期 Q2 2025</h3>
+                <ul class="phase-list">
+                    <li data-i18n="roadmap.phase2.item1">$TAO 代币发行</li>
+                    <li data-i18n="roadmap.phase2.item2">DEX 流动性上线</li>
+                    <li data-i18n="roadmap.phase2.item3">观象节点测试网</li>
+                    <li data-i18n="roadmap.phase2.item4">首批AI模型训练</li>
+                    <li data-i18n="roadmap.phase2.item5">社区空投活动</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <div class="phase-number">III</div>
+                <h3 class="phase-title" data-i18n="roadmap.phase3.title">龙盘期 Q3 2025</h3>
+                <ul class="phase-list">
+                    <li data-i18n="roadmap.phase3.item1">主网上线</li>
+                    <li data-i18n="roadmap.phase3.item2">预测市场启动</li>
+                    <li data-i18n="roadmap.phase3.item3">治理DAO成立</li>
+                    <li data-i18n="roadmap.phase3.item4">文明NFT发行</li>
+                    <li data-i18n="roadmap.phase3.item5">CEX 交易所上线</li>
+                </ul>
+            </div>
+            <div class="roadmap-phase">
+                <div class="phase-number">IV</div>
+                <h3 class="phase-title" data-i18n="roadmap.phase4.title">协和期 Q4 2025</h3>
+                <ul class="phase-list">
+                    <li data-i18n="roadmap.phase4.item1">跨链桥上线</li>
+                    <li data-i18n="roadmap.phase4.item2">企业级API开放</li>
+                    <li data-i18n="roadmap.phase4.item3">全球节点扩展</li>
+                    <li data-i18n="roadmap.phase4.item4">陶寺文化元宇宙</li>
+                    <li data-i18n="roadmap.phase4.item5">生态基金启动</li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta">
+        <h2 data-i18n="cta.title">加入 TAOISI 文明</h2>
+        <p data-i18n="cta.subtitle">成为新时代的"羲和之官"，共享4000年智慧结晶</p>
+        <div class="hero-buttons">
+            <button class="btn-primary" onclick="openWalletModal()">
+                <span data-i18n="cta.connectWallet">🔗 连接钱包</span>
+            </button>
+            <a href="#" class="btn-secondary" data-i18n="cta.joinCommunity">💬 加入社区</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-brand">
+                <div class="logo">
+                    <div class="logo-icon">龍</div>
+                    <span class="logo-text">TAOISI</span>
+                </div>
+                <p data-i18n="footer.desc">TAOISI（陶寺）协议融合4000年中华文明智慧与现代AI技术，致力于打造去中心化预测市场与数据治理协议。</p>
+                <div class="social-links">
+                    <a href="#">𝕏</a>
+                    <a href="#">TG</a>
+                    <a href="#">DC</a>
+                    <a href="#">GH</a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h4 class="footer-title" data-i18n="footer.protocol">协议</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-i18n="footer.whitepaper">白皮书</a></li>
+                    <li><a href="#" data-i18n="footer.contracts">智能合约</a></li>
+                    <li><a href="#" data-i18n="footer.dao">治理DAO</a></li>
+                    <li><a href="#" data-i18n="footer.roadmap">路线图</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 class="footer-title" data-i18n="footer.ecosystem">生态</h4>
+                <ul class="footer-links">
+                    <li><a href="#" data-i18n="footer.prediction">预测市场</a></li>
+                    <li><a href="#" data-i18n="footer.nft">NFT市场</a></li>
+                    <li><a href="#" data-i18n="footer.staking">节点质押</a></li>
+                    <li><a href="#" data-i18n="footer.api">开发者API</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4 class="footer-title" data-i18n="footer.community">社区</h4>
+                <ul class="footer-links">
+                    <li><a href="#">Twitter/X</a></li>
+                    <li><a href="#">Telegram</a></li>
+                    <li><a href="#">Discord</a></li>
+                    <li><a href="#">Medium</a></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p data-i18n="footer.copyright">© 2025 TAOISI Protocol. 致敬陶寺遗址，致敬中华文明探源工程。</p>
+        </div>
+    </footer>
+
+    <!-- 钱包连接弹窗 -->
+    <div class="modal-overlay" id="walletModal">
+        <div class="modal" style="position: relative;">
+            <button class="modal-close" onclick="closeWalletModal()">×</button>
+            <h3 class="modal-title" data-i18n="wallet.modalTitle">连接钱包</h3>
+            <p class="modal-subtitle" data-i18n="wallet.modalSubtitle">选择钱包以连接到 TAOISI</p>
+            <div class="wallet-option" onclick="connectMetaMask()">
+                <div class="wallet-icon">🦊</div>
+                <span class="wallet-name">MetaMask</span>
+            </div>
+            <div class="wallet-option" onclick="connectWalletConnect()">
+                <div class="wallet-icon" style="background: linear-gradient(135deg, #3B99FC, #0066CC);">📱</div>
+                <span class="wallet-name">WalletConnect</span>
+            </div>
+            <div class="wallet-option" onclick="connectCoinbase()">
+                <div class="wallet-icon" style="background: linear-gradient(135deg, #0052FF, #002299);">💰</div>
+                <span class="wallet-name">Coinbase Wallet</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 多语言翻译数据
+        const translations = {
+            'zh-CN': {
+                'nav.narrative': '文明叙事',
+                'nav.features': '协议特色',
+                'nav.tokenomics': '代币经济',
+                'nav.roadmap': '发展路线',
+                'wallet.connect': '连接钱包',
+                'wallet.disconnect': '断开连接',
+                'wallet.modalTitle': '连接钱包',
+                'wallet.modalSubtitle': '选择钱包以连接到 TAOISI',
+                'hero.badge': '4000年文明 × AI智能',
+                'hero.subtitle': '陶寺智慧协议',
+                'hero.tagline': '「敬授民时，数授链时」',
+                'hero.desc': '当陶寺观象台遇见AI神经网络。4300年前，先民以12道缝隙观测天象，制定历法指导农耕——这是人类最早的"数据收集与算法预测"系统。今天，TAOISI继承这份智慧，打造去中心化AI预测协议。',
+                'hero.connectWallet': '🔗 连接钱包',
+                'hero.whitepaper': '📖 阅读白皮书',
+                'stats.history': '年历史传承',
+                'stats.supply': '$TAO 总供应量',
+                'stats.nodes': '节气算法节点',
+                'stats.possibilities': '预测可能性',
+                'narrative.title': '文明叙事',
+                'narrative.subtitle': '从陶寺观象台到去中心化AI协议，跨越四千年的智慧传承',
+                'narrative.phase1.year': '公元前2300年',
+                'narrative.phase1.title': '观象授时',
+                'narrative.phase1.desc': '陶寺先民建造世界最早的天文观测台，通过12道缝隙观测日出，将一年精确划分为20个节气，制定指导农耕的历法系统。',
+                'narrative.phase2.year': '2025年',
+                'narrative.phase2.title': '文明觉醒',
+                'narrative.phase2.desc': '陶寺遗址正式列入国家考古遗址公园，"最初的中国"走向世界。龙盘、圭表、观象台——先民的智慧等待被重新诠释。',
+                'narrative.phase3.year': '2025年',
+                'narrative.phase3.title': '智慧上链',
+                'narrative.phase3.desc': 'TAOISI协议诞生。观象台成为分布式数据节点，节气历法进化为AI预测模型，每一位持有者都是新时代的"羲和之官"。',
+                'features.title': '协议特色',
+                'features.subtitle': '融合古代天文智慧与现代AI技术的创新协议',
+                'features.f1.title': '观象节点网络',
+                'features.f1.desc': '分布式数据收集节点如同陶寺观象台的12道缝隙，实时捕获市场信号、社会趋势、自然周期等多维度数据，为AI模型提供训练燃料。',
+                'features.f2.title': '节气预测模型',
+                'features.f2.desc': '基于深度学习的时间序列预测模型，将陶寺20节气智慧转化为市场周期预测算法，帮助参与者把握最佳时机。',
+                'features.f3.title': '龙盘治理权',
+                'features.f3.desc': '持有$TAO即获得治理权，如同陶寺龙盘象征的王权地位。参与协议升级、模型参数调整、生态基金分配等关键决策。',
+                'features.f4.title': '农耕收益机制',
+                'features.f4.desc': '质押$TAO参与AI模型训练与验证，获得预测市场收益分成。如先民依历法耕作收获，参与者依算法共享智慧果实。',
+                'features.f5.title': '圭表跨链桥',
+                'features.f5.desc': '以陶寺圭表为灵感，构建多链互操作协议。$TAO可在以太坊、BSC、Solana等主流公链间自由流通，打破生态孤岛。',
+                'features.f6.title': '文明NFT',
+                'features.f6.desc': '陶寺龙盘、彩绘陶器等文物数字化重生。限量发行的文明NFT不仅是收藏品，更是协议治理特权与收益加成的凭证。',
+                'tokenomics.title': '代币经济',
+                'tokenomics.subtitle': '$TAO 代币分配与使用场景',
+                'tokenomics.details': '代币详情',
+                'tokenomics.nameLabel': '代币名称',
+                'tokenomics.symbolLabel': '代币符号',
+                'tokenomics.supplyLabel': '总供应量',
+                'tokenomics.chainLabel': '区块链',
+                'tokenomics.contractLabel': '合约地址',
+                'tokenomics.comingSoon': '即将公布',
+                'roadmap.title': '发展路线',
+                'roadmap.subtitle': 'TAOISI 协议的演进规划',
+                'roadmap.phase1.title': '观象期 Q1 2025',
+                'roadmap.phase1.item1': '白皮书发布',
+                'roadmap.phase1.item2': '官网与社区建设',
+                'roadmap.phase1.item3': '智能合约审计',
+                'roadmap.phase1.item4': '种子轮融资',
+                'roadmap.phase1.item5': '核心团队组建',
+                'roadmap.phase2.title': '授时期 Q2 2025',
+                'roadmap.phase2.item1': '$TAO 代币发行',
+                'roadmap.phase2.item2': 'DEX 流动性上线',
+                'roadmap.phase2.item3': '观象节点测试网',
+                'roadmap.phase2.item4': '首批AI模型训练',
+                'roadmap.phase2.item5': '社区空投活动',
+                'roadmap.phase3.title': '龙盘期 Q3 2025',
+                'roadmap.phase3.item1': '主网上线',
+                'roadmap.phase3.item2': '预测市场启动',
+                'roadmap.phase3.item3': '治理DAO成立',
+                'roadmap.phase3.item4': '文明NFT发行',
+                'roadmap.phase3.item5': 'CEX 交易所上线',
+                'roadmap.phase4.title': '协和期 Q4 2025',
+                'roadmap.phase4.item1': '跨链桥上线',
+                'roadmap.phase4.item2': '企业级API开放',
+                'roadmap.phase4.item3': '全球节点扩展',
+                'roadmap.phase4.item4': '陶寺文化元宇宙',
+                'roadmap.phase4.item5': '生态基金启动',
+                'cta.title': '加入 TAOISI 文明',
+                'cta.subtitle': '成为新时代的"羲和之官"，共享4000年智慧结晶',
+                'cta.connectWallet': '🔗 连接钱包',
+                'cta.joinCommunity': '💬 加入社区',
+                'footer.desc': 'TAOISI（陶寺）协议融合4000年中华文明智慧与现代AI技术，致力于打造去中心化预测市场与数据治理协议。',
+                'footer.protocol': '协议',
+                'footer.whitepaper': '白皮书',
+                'footer.contracts': '智能合约',
+                'footer.dao': '治理DAO',
+                'footer.roadmap': '路线图',
+                'footer.ecosystem': '生态',
+                'footer.prediction': '预测市场',
+                'footer.nft': 'NFT市场',
+                'footer.staking': '节点质押',
+                'footer.api': '开发者API',
+                'footer.community': '社区',
+                'footer.copyright': '© 2025 TAOISI Protocol. 致敬陶寺遗址，致敬中华文明探源工程。'
+            },
+            'zh-TW': {
+                'nav.narrative': '文明敘事',
+                'nav.features': '協議特色',
+                'nav.tokenomics': '代幣經濟',
+                'nav.roadmap': '發展路線',
+                'wallet.connect': '連接錢包',
+                'wallet.disconnect': '斷開連接',
+                'wallet.modalTitle': '連接錢包',
+                'wallet.modalSubtitle': '選擇錢包以連接到 TAOISI',
+                'hero.badge': '4000年文明 × AI智能',
+                'hero.subtitle': '陶寺智慧協議',
+                'hero.tagline': '「敬授民時，數授鏈時」',
+                'hero.desc': '當陶寺觀象台遇見AI神經網絡。4300年前，先民以12道縫隙觀測天象，制定曆法指導農耕——這是人類最早的"數據收集與算法預測"系統。今天，TAOISI繼承這份智慧，打造去中心化AI預測協議。',
+                'hero.connectWallet': '🔗 連接錢包',
+                'hero.whitepaper': '📖 閱讀白皮書',
+                'stats.history': '年歷史傳承',
+                'stats.supply': '$TAO 總供應量',
+                'stats.nodes': '節氣算法節點',
+                'stats.possibilities': '預測可能性',
+                'narrative.title': '文明敘事',
+                'narrative.subtitle': '從陶寺觀象台到去中心化AI協議，跨越四千年的智慧傳承',
+                'narrative.phase1.year': '公元前2300年',
+                'narrative.phase1.title': '觀象授時',
+                'narrative.phase1.desc': '陶寺先民建造世界最早的天文觀測台，通過12道縫隙觀測日出，將一年精確劃分為20個節氣，制定指導農耕的曆法系統。',
+                'narrative.phase2.year': '2025年',
+                'narrative.phase2.title': '文明覺醒',
+                'narrative.phase2.desc': '陶寺遺址正式列入國家考古遺址公園，"最初的中國"走向世界。龍盤、圭表、觀象台——先民的智慧等待被重新詮釋。',
+                'narrative.phase3.year': '2025年',
+                'narrative.phase3.title': '智慧上鏈',
+                'narrative.phase3.desc': 'TAOISI協議誕生。觀象台成為分佈式數據節點，節氣曆法進化為AI預測模型，每一位持有者都是新時代的"羲和之官"。',
+                'features.title': '協議特色',
+                'features.subtitle': '融合古代天文智慧與現代AI技術的創新協議',
+                'features.f1.title': '觀象節點網絡',
+                'features.f1.desc': '分佈式數據收集節點如同陶寺觀象台的12道縫隙，實時捕獲市場信號、社會趨勢、自然週期等多維度數據，為AI模型提供訓練燃料。',
+                'features.f2.title': '節氣預測模型',
+                'features.f2.desc': '基於深度學習的時間序列預測模型，將陶寺20節氣智慧轉化為市場週期預測算法，幫助參與者把握最佳時機。',
+                'features.f3.title': '龍盤治理權',
+                'features.f3.desc': '持有$TAO即獲得治理權，如同陶寺龍盤象徵的王權地位。參與協議升級、模型參數調整、生態基金分配等關鍵決策。',
+                'features.f4.title': '農耕收益機制',
+                'features.f4.desc': '質押$TAO參與AI模型訓練與驗證，獲得預測市場收益分成。如先民依曆法耕作收穫，參與者依算法共享智慧果實。',
+                'features.f5.title': '圭表跨鏈橋',
+                'features.f5.desc': '以陶寺圭表為靈感，構建多鏈互操作協議。$TAO可在以太坊、BSC、Solana等主流公鏈間自由流通，打破生態孤島。',
+                'features.f6.title': '文明NFT',
+                'features.f6.desc': '陶寺龍盤、彩繪陶器等文物數字化重生。限量發行的文明NFT不僅是收藏品，更是協議治理特權與收益加成的憑證。',
+                'tokenomics.title': '代幣經濟',
+                'tokenomics.subtitle': '$TAO 代幣分配與使用場景',
+                'tokenomics.details': '代幣詳情',
+                'tokenomics.nameLabel': '代幣名稱',
+                'tokenomics.symbolLabel': '代幣符號',
+                'tokenomics.supplyLabel': '總供應量',
+                'tokenomics.chainLabel': '區塊鏈',
+                'tokenomics.contractLabel': '合約地址',
+                'tokenomics.comingSoon': '即將公布',
+                'roadmap.title': '發展路線',
+                'roadmap.subtitle': 'TAOISI 協議的演進規劃',
+                'roadmap.phase1.title': '觀象期 Q1 2025',
+                'roadmap.phase1.item1': '白皮書發布',
+                'roadmap.phase1.item2': '官網與社區建設',
+                'roadmap.phase1.item3': '智能合約審計',
+                'roadmap.phase1.item4': '種子輪融資',
+                'roadmap.phase1.item5': '核心團隊組建',
+                'roadmap.phase2.title': '授時期 Q2 2025',
+                'roadmap.phase2.item1': '$TAO 代幣發行',
+                'roadmap.phase2.item2': 'DEX 流動性上線',
+                'roadmap.phase2.item3': '觀象節點測試網',
+                'roadmap.phase2.item4': '首批AI模型訓練',
+                'roadmap.phase2.item5': '社區空投活動',
+                'roadmap.phase3.title': '龍盤期 Q3 2025',
+                'roadmap.phase3.item1': '主網上線',
+                'roadmap.phase3.item2': '預測市場啟動',
+                'roadmap.phase3.item3': '治理DAO成立',
+                'roadmap.phase3.item4': '文明NFT發行',
+                'roadmap.phase3.item5': 'CEX 交易所上線',
+                'roadmap.phase4.title': '協和期 Q4 2025',
+                'roadmap.phase4.item1': '跨鏈橋上線',
+                'roadmap.phase4.item2': '企業級API開放',
+                'roadmap.phase4.item3': '全球節點擴展',
+                'roadmap.phase4.item4': '陶寺文化元宇宙',
+                'roadmap.phase4.item5': '生態基金啟動',
+                'cta.title': '加入 TAOISI 文明',
+                'cta.subtitle': '成為新時代的"羲和之官"，共享4000年智慧結晶',
+                'cta.connectWallet': '🔗 連接錢包',
+                'cta.joinCommunity': '💬 加入社區',
+                'footer.desc': 'TAOISI（陶寺）協議融合4000年中華文明智慧與現代AI技術，致力於打造去中心化預測市場與數據治理協議。',
+                'footer.protocol': '協議',
+                'footer.whitepaper': '白皮書',
+                'footer.contracts': '智能合約',
+                'footer.dao': '治理DAO',
+                'footer.roadmap': '路線圖',
+                'footer.ecosystem': '生態',
+                'footer.prediction': '預測市場',
+                'footer.nft': 'NFT市場',
+                'footer.staking': '節點質押',
+                'footer.api': '開發者API',
+                'footer.community': '社區',
+                'footer.copyright': '© 2025 TAOISI Protocol. 致敬陶寺遺址，致敬中華文明探源工程。'
+            },
+            'en': {
+                'nav.narrative': 'Narrative',
+                'nav.features': 'Features',
+                'nav.tokenomics': 'Tokenomics',
+                'nav.roadmap': 'Roadmap',
+                'wallet.connect': 'Connect Wallet',
+                'wallet.disconnect': 'Disconnect',
+                'wallet.modalTitle': 'Connect Wallet',
+                'wallet.modalSubtitle': 'Choose a wallet to connect to TAOISI',
+                'hero.badge': '4000 Years Civilization × AI',
+                'hero.subtitle': 'Taosi Wisdom Protocol',
+                'hero.tagline': '"Respect Time, Empower Chain"',
+                'hero.desc': 'When the Taosi Observatory meets AI neural networks. 4,300 years ago, ancient people observed celestial phenomena through 12 gaps to create calendars for agriculture—the earliest "data collection and algorithmic prediction" system in human history. Today, TAOISI inherits this wisdom to build a decentralized AI prediction protocol.',
+                'hero.connectWallet': '🔗 Connect Wallet',
+                'hero.whitepaper': '📖 Whitepaper',
+                'stats.history': 'Years Heritage',
+                'stats.supply': '$TAO Total Supply',
+                'stats.nodes': 'Solar Term Nodes',
+                'stats.possibilities': 'Possibilities',
+                'narrative.title': 'Civilization Narrative',
+                'narrative.subtitle': 'From Taosi Observatory to Decentralized AI Protocol: 4,000 Years of Wisdom',
+                'narrative.phase1.year': '2300 BC',
+                'narrative.phase1.title': 'Astronomical Observation',
+                'narrative.phase1.desc': 'Ancient Taosi people built the world\'s earliest astronomical observatory, observing sunrise through 12 gaps to divide the year into 20 solar terms, creating a calendar system for agriculture.',
+                'narrative.phase2.year': '2025 AD',
+                'narrative.phase2.title': 'Civilization Awakening',
+                'narrative.phase2.desc': 'Taosi Site officially listed as a National Archaeological Park. "The First China" goes global. Dragon plates, gnomons, observatories—ancient wisdom awaits reinterpretation.',
+                'narrative.phase3.year': '2025 AD',
+                'narrative.phase3.title': 'Wisdom On-Chain',
+                'narrative.phase3.desc': 'TAOISI Protocol is born. The observatory becomes distributed data nodes, solar terms evolve into AI prediction models, and every holder becomes a modern "Xihe Official".',
+                'features.title': 'Protocol Features',
+                'features.subtitle': 'Innovative protocol merging ancient astronomical wisdom with modern AI technology',
+                'features.f1.title': 'Observatory Node Network',
+                'features.f1.desc': 'Distributed data collection nodes function like the 12 gaps of Taosi Observatory, capturing multi-dimensional data on market signals, social trends, and natural cycles in real-time.',
+                'features.f2.title': 'Solar Term Prediction Model',
+                'features.f2.desc': 'Deep learning-based time series prediction model transforming Taosi\'s 20 solar terms wisdom into market cycle prediction algorithms.',
+                'features.f3.title': 'Dragon Plate Governance',
+                'features.f3.desc': 'Hold $TAO to gain governance rights, like the royal authority symbolized by Taosi dragon plates. Participate in protocol upgrades and ecosystem decisions.',
+                'features.f4.title': 'Agricultural Yield Mechanism',
+                'features.f4.desc': 'Stake $TAO to participate in AI model training and validation, earning prediction market revenue shares. Like ancient farmers following calendars, participants share algorithmic fruits.',
+                'features.f5.title': 'Gnomon Cross-Chain Bridge',
+                'features.f5.desc': 'Inspired by Taosi gnomons, building multi-chain interoperability. $TAO flows freely across Ethereum, BSC, Solana, breaking ecosystem silos.',
+                'features.f6.title': 'Civilization NFTs',
+                'features.f6.desc': 'Digital rebirth of Taosi artifacts like dragon plates and painted pottery. Limited civilization NFTs are collectibles and governance privilege credentials.',
+                'tokenomics.title': 'Tokenomics',
+                'tokenomics.subtitle': '$TAO Token Distribution and Use Cases',
+                'tokenomics.details': 'Token Details',
+                'tokenomics.nameLabel': 'Token Name',
+                'tokenomics.symbolLabel': 'Token Symbol',
+                'tokenomics.supplyLabel': 'Total Supply',
+                'tokenomics.chainLabel': 'Blockchain',
+                'tokenomics.contractLabel': 'Contract Address',
+                'tokenomics.comingSoon': 'Coming Soon',
+                'roadmap.title': 'Roadmap',
+                'roadmap.subtitle': 'TAOISI Protocol Evolution Plan',
+                'roadmap.phase1.title': 'Observation Q1 2025',
+                'roadmap.phase1.item1': 'Whitepaper Release',
+                'roadmap.phase1.item2': 'Website & Community',
+                'roadmap.phase1.item3': 'Smart Contract Audit',
+                'roadmap.phase1.item4': 'Seed Round Funding',
+                'roadmap.phase1.item5': 'Core Team Assembly',
+                'roadmap.phase2.title': 'Timekeeping Q2 2025',
+                'roadmap.phase2.item1': '$TAO Token Launch',
+                'roadmap.phase2.item2': 'DEX Liquidity',
+                'roadmap.phase2.item3': 'Observatory Testnet',
+                'roadmap.phase2.item4': 'First AI Model Training',
+                'roadmap.phase2.item5': 'Community Airdrop',
+                'roadmap.phase3.title': 'Dragon Plate Q3 2025',
+                'roadmap.phase3.item1': 'Mainnet Launch',
+                'roadmap.phase3.item2': 'Prediction Market Live',
+                'roadmap.phase3.item3': 'Governance DAO',
+                'roadmap.phase3.item4': 'Civilization NFT Launch',
+                'roadmap.phase3.item5': 'CEX Listings',
+                'roadmap.phase4.title': 'Harmony Q4 2025',
+                'roadmap.phase4.item1': 'Cross-Chain Bridge',
+                'roadmap.phase4.item2': 'Enterprise API',
+                'roadmap.phase4.item3': 'Global Node Expansion',
+                'roadmap.phase4.item4': 'Taosi Metaverse',
+                'roadmap.phase4.item5': 'Ecosystem Fund',
+                'cta.title': 'Join TAOISI Civilization',
+                'cta.subtitle': 'Become a modern "Xihe Official", share 4,000 years of wisdom',
+                'cta.connectWallet': '🔗 Connect Wallet',
+                'cta.joinCommunity': '💬 Join Community',
+                'footer.desc': 'TAOISI Protocol merges 4,000 years of Chinese civilization wisdom with modern AI technology, dedicated to building decentralized prediction markets and data governance protocols.',
+                'footer.protocol': 'Protocol',
+                'footer.whitepaper': 'Whitepaper',
+                'footer.contracts': 'Smart Contracts',
+                'footer.dao': 'Governance DAO',
+                'footer.roadmap': 'Roadmap',
+                'footer.ecosystem': 'Ecosystem',
+                'footer.prediction': 'Prediction Market',
+                'footer.nft': 'NFT Market',
+                'footer.staking': 'Node Staking',
+                'footer.api': 'Developer API',
+                'footer.community': 'Community',
+                'footer.copyright': '© 2025 TAOISI Protocol. Honoring Taosi Site, honoring Chinese Civilization Exploration Project.'
+            }
+        };
+
+        // 当前语言
+        let currentLang = 'zh-CN';
+        let web3 = null;
+        let userAccount = null;
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            createStars();
+            initLanguage();
+            initWeb3();
+        });
+
+        // 生成星空背景
+        function createStars() {
+            const starsContainer = document.getElementById('stars');
+            const starCount = 150;
+            
+            for (let i = 0; i < starCount; i++) {
+                const star = document.createElement('div');
+                star.className = 'star';
+                star.style.left = Math.random() * 100 + '%';
+                star.style.top = Math.random() * 100 + '%';
+                star.style.width = Math.random() * 3 + 1 + 'px';
+                star.style.height = star.style.width;
+                star.style.animationDelay = Math.random() * 3 + 's';
+                star.style.animationDuration = (Math.random() * 3 + 2) + 's';
+                starsContainer.appendChild(star);
+            }
+        }
+
+        // 初始化语言
+        function initLanguage() {
+            const savedLang = localStorage.getItem('taosi-lang') || 'zh-CN';
+            setLanguage(savedLang);
+
+            // 语言切换事件
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const lang = this.dataset.lang;
+                    setLanguage(lang);
+                });
+            });
+        }
+
+        // 设置语言
+        function setLanguage(lang) {
+            currentLang = lang;
+            localStorage.setItem('taosi-lang', lang);
+
+            // 更新语言按钮显示
+            const langNames = {
+                'zh-CN': '中文',
+                'zh-TW': '繁體',
+                'en': 'English'
+            };
+            document.getElementById('langText').textContent = langNames[lang];
+
+            // 更新激活状态
+            document.querySelectorAll('.lang-option').forEach(option => {
+                option.classList.toggle('active', option.dataset.lang === lang);
+            });
+
+            // 更新页面文本
+            document.querySelectorAll('[data-i18n]').forEach(element => {
+                const key = element.dataset.i18n;
+                if (translations[lang] && translations[lang][key]) {
+                    element.textContent = translations[lang][key];
+                }
+            });
+
+            // 更新HTML lang属性
+            document.documentElement.lang = lang;
+        }
+
+        // 初始化Web3
+        function initWeb3() {
+            if (typeof window.ethereum !== 'undefined') {
+                web3 = new Web3(window.ethereum);
+                
+                // 检查是否已连接
+                window.ethereum.request({ method: 'eth_accounts' })
+                    .then(accounts => {
+                        if (accounts.length > 0) {
+                            handleAccountConnected(accounts[0]);
+                        }
+                    })
+                    .catch(console.error);
+
+                // 监听账户变化
+                window.ethereum.on('accountsChanged', function(accounts) {
+                    if (accounts.length > 0) {
+                        handleAccountConnected(accounts[0]);
+                    } else {
+                        handleAccountDisconnected();
+                    }
+                });
+
+                // 监听链变化
+                window.ethereum.on('chainChanged', function() {
+                    window.location.reload();
+                });
+            }
+        }
+
+        // 打开钱包弹窗
+        function openWalletModal() {
+            document.getElementById('walletModal').classList.add('active');
+        }
+
+        // 关闭钱包弹窗
+        function closeWalletModal() {
+            document.getElementById('walletModal').classList.remove('active');
+        }
+
+        // 连接MetaMask
+        async function connectMetaMask() {
+            if (typeof window.ethereum === 'undefined') {
+                alert('Please install MetaMask!');
+                window.open('https://metamask.io/download/', '_blank');
+                return;
+            }
+
+            try {
+                const accounts = await window.ethereum.request({ 
+                    method: 'eth_requestAccounts' 
+                });
+                handleAccountConnected(accounts[0]);
+                closeWalletModal();
+            } catch (error) {
+                console.error('Connection error:', error);
+            }
+        }
+
+        // 连接WalletConnect
+        function connectWalletConnect() {
+            alert('WalletConnect integration coming soon!');
+        }
+
+        // 连接Coinbase Wallet
+        function connectCoinbase() {
+            alert('Coinbase Wallet integration coming soon!');
+        }
+
+        // 处理账户连接
+        function handleAccountConnected(account) {
+            userAccount = account;
+            const walletBtn = document.getElementById('walletBtn');
+            const shortAddress = account.substring(0, 6) + '...' + account.substring(account.length - 4);
+            walletBtn.innerHTML = `<span>✓</span><span>${shortAddress}</span>`;
+            walletBtn.classList.add('connected');
+            walletBtn.onclick = disconnectWallet;
+        }
+
+        // 处理账户断开
+        function handleAccountDisconnected() {
+            userAccount = null;
+            const walletBtn = document.getElementById('walletBtn');
+            const connectText = translations[currentLang]['wallet.connect'] || '连接钱包';
+            walletBtn.innerHTML = `<span>🔗</span><span>${connectText}</span>`;
+            walletBtn.classList.remove('connected');
+            walletBtn.onclick = openWalletModal;
+        }
+
+        // 断开钱包连接
+        function disconnectWallet() {
+            handleAccountDisconnected();
+        }
+
+        // 平滑滚动
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // 导航栏滚动效果
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 100) {
+                nav.style.background = 'rgba(0,0,0,0.95)';
+            } else {
+                nav.style.background = 'linear-gradient(to bottom, rgba(0,0,0,0.8), transparent)';
+            }
+        });
+
+        // 点击弹窗外部关闭
+        document.getElementById('walletModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeWalletModal();
+            }
+        });
+    </script>
+</body>
+</html>
